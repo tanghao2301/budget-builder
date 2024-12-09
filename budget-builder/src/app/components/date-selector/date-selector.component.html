@@ -1,8 +1,9 @@
-<form>
+<form class="m-10 flex gap-10">
   <label>
     Start Month:
     <input
       type="month"
+      class="mt-1"
       (change)="calculateDateRange()"
       [(ngModel)]="startMonth"
       name="startMonth"
@@ -12,6 +13,7 @@
     End Month:
     <input
       type="month"
+      class="mt-1"
       (change)="calculateDateRange()"
       [(ngModel)]="endMonth"
       name="endMonth"
