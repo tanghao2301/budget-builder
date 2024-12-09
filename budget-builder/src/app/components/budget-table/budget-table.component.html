@@ -1,0 +1,168 @@
+<table #table class="table-auto">
+  <thead>
+    <tr>
+      <th>Start Period V End Period V</th>
+      @for(month of budgetData.months; track month) {
+      <th>{{ month }}</th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for(row of rows; let rowIndex = $index; track rowIndex) {
+    <tr>
+      <td>
+        <strong>{{ row.mainCategory }}</strong>
+      </td>
+    </tr>
+    @if(row.categories.length === 0) {
+    <tr>
+      <td [attr.data-row]="rowIndex">
+        <input
+          type="text"
+          (keydown.enter)="handleKeydownCreateCategory(row, $event)"
+          [id]="'cell-' + rowIndex"
+        />
+      </td>
+    </tr>
+    } @else { @for(rowCategory of row.categories; let rowCategoryIndex = $index;
+    track rowCategoryIndex) {
+    <tr>
+      <td [attr.data-row]="rowCategoryIndex" class="flex gap-1">
+        <input
+          type="text"
+          [ngClass]="{ 'font-bold': rowCategory.isMainCategory }"
+          [value]="rowCategory.category"
+          (input)="updateCategoryRow(rowCategory, $event)"
+          [id]="'cell-' + rowCategoryIndex"
+        />
+        <button
+          type="button"
+          class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
+          (click)="removeCategory(rowCategory)"
+        >
+          X
+        </button>
+      </td>
+      @for(cell of rowCategory.cells; let colIndex = $index; track colIndex) {
+      <td
+        [attr.data-row]="rowCategoryIndex"
+        [attr.data-col]="colIndex"
+        (keydown)="handleKeydown($event, rowCategoryIndex, colIndex)"
+      >
+        <input
+          type="number"
+          [value]="cell"
+          (input)="
+            updateCell($event, colIndex, rowCategory); calculateClosingBalance()
+          "
+          (contextmenu)="showContextMenu($event, rowCategory)"
+          [id]="'cell-' + rowCategoryIndex + '-' + colIndex"
+          min="0"
+        />
+      </td>
+      }
+    </tr>
+    @for(subCategory of rowCategory.subCategories; let subCategoryIndex =
+    $index; track subCategoryIndex) {
+    <tr>
+      <td class="flex gap-1">
+        <input
+          type="text"
+          [value]="subCategory.category"
+          (input)="updateSubCategoryRow(rowCategory, subCategory, $event)"
+          [id]="'cell-' + subCategoryIndex"
+        />
+        <button
+          type="button"
+          class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
+          (click)="removeCategory(rowCategory, subCategory)"
+        >
+          X
+        </button>
+      </td>
+      @for(cell of subCategory.cells; let colIndex = $index; track colIndex) {
+      <td
+        [attr.data-row]="rowCategoryIndex"
+        [attr.data-col]="colIndex"
+        (keydown)="handleKeydown($event, subCategoryIndex, colIndex)"
+      >
+        <input
+          type="number"
+          [value]="cell"
+          (input)="
+            updateCell($event, colIndex, rowCategory, subCategory);
+            calculateClosingBalance()
+          "
+          (contextmenu)="
+            showContextMenu($event, rowCategory, subCategory, true)
+          "
+          [id]="'cell-' + subCategoryIndex + '-' + colIndex"
+          min="0"
+        />
+      </td>
+      }
+    </tr>
+    }
+    <tr>
+      <td>
+        <div class="cursor-pointer" (click)="createSubCategory(rowCategory.id)">
+          Add new {{ rowCategory.category }} category
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td class="font-semibold">Sub Totals</td>
+      @for(subTotal of calculateSubTotals(rowCategory); let subTotalIndex =
+      $index; track subTotalIndex) {
+      <td>{{ subTotal }}</td>
+      }
+    </tr>
+    } } @if(row.categories.length > 0) {
+    <tr>
+      <td
+        class="cursor-pointer"
+        (click)="handleKeydownCreateCategory(row, $event)"
+      >
+        Add new Parent category
+      </td>
+    </tr>
+    <tr>
+      <td class="font-semibold">{{ row.mainCategory }} Total</td>
+      @for(total of calculateTotal(row.mainCategory); let totalIndex = $index;
+      track totalIndex) {
+      <td>{{ total }}</td>
+      }
+    </tr>
+    } }
+    <tr>
+      <td class="font-semibold">Profit / Loss</td>
+      @for(profitLoss of calculateProfitLoss(); let profitLossIndex = $index;
+      track profitLossIndex) {
+      <td>{{ profitLoss }}</td>
+      }
+    </tr>
+    <tr>
+      <td class="font-semibold">Opening Balance</td>
+      @for(balance of openingBalances; let balanceIndex = $index; track
+      balanceIndex) {
+      <td>{{ balance }}</td>
+      }
+    </tr>
+    <tr>
+      <td class="font-semibold">Closing Balance</td>
+      @for(balance of closingBalances; let balanceIndex = $index; track
+      balanceIndex) {
+      <td>{{ balance }}</td>
+      }
+    </tr>
+  </tbody>
+</table>
+<!-- Context Menu -->
+<div
+  *ngIf="contextMenuVisible"
+  [style.top.px]="contextMenuPosition.y"
+  [style.left.px]="contextMenuPosition.x"
+  class="context-menu"
+>
+  <button (click)="applyToAll()">Apply to All</button>
+</div>

@@ -1,0 +1,39 @@
+table {
+  @apply w-full border-collapse my-10 mx-auto;
+}
+th,
+td {
+  @apply border border-solid border-gray p-2;
+}
+th {
+  @apply bg-light-gray;
+}
+tr > th:first-child,
+td:first-child {
+  @apply w-80;
+}
+
+input {
+  @apply w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow;
+}
+.context-menu {
+  position: fixed;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.context-menu button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.context-menu button:hover {
+  text-decoration: underline;
+}

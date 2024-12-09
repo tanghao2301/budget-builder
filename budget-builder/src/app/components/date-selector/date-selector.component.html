@@ -1,0 +1,20 @@
+<form>
+  <label>
+    Start Month:
+    <input
+      type="month"
+      (change)="calculateDateRange()"
+      [(ngModel)]="startMonth"
+      name="startMonth"
+    />
+  </label>
+  <label>
+    End Month:
+    <input
+      type="month"
+      (change)="calculateDateRange()"
+      [(ngModel)]="endMonth"
+      name="endMonth"
+    />
+  </label>
+</form>
